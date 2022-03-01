@@ -25,6 +25,8 @@ export class AppComponent {
 
 	changedValue: ChangeData;
 
+	phoneNumber = '+8801680459329'
+
 	changePreferredCountries() {
 		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	}

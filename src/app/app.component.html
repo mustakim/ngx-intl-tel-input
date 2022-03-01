@@ -51,3 +51,23 @@
 		<pre>{{ f.form.controls['phone'].errors | json }}</pre>
 	</div>
 </div>
+
+
+
+
+<ngx-custom-intl-tel [cssClass]="'custom'"
+	[preferredCountries]="preferredCountries"
+	[enableAutoCountrySelect]="true"
+	[enablePlaceholder]="true"
+	[searchCountryFlag]="true"
+	[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+	[selectFirstCountry]="false"
+	[selectedCountryISO]="CountryISO.India"
+	[maxLength]="15"
+	[phoneValidation]="true"
+	[separateDialCode]="separateDialCode"
+	[numberFormat]="PhoneNumberFormat.National"
+	[phoneNumber]="phoneNumber"
+	(valueChange)="onValueChange($event)"
+	name="phone">
+</ngx-custom-intl-tel>

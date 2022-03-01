@@ -62,6 +62,7 @@ export class NgxIntlTelInputComponent implements OnInit, OnChanges {
 	@Input() phoneValidation = true;
 	@Input() inputId = 'phone';
 	@Input() separateDialCode = false;
+	@Input() phoneNumber = '';
 	separateDialCodeClass: string;
 
 	@Output() readonly countryChange = new EventEmitter<Country>();
@@ -78,7 +79,7 @@ export class NgxIntlTelInputComponent implements OnInit, OnChanges {
 		priority: 0,
 	};
 
-	phoneNumber = '';
+
 	allCountries: Array<Country> = [];
 	preferredCountriesInDropDown: Array<Country> = [];
 	// Has to be 'any' to prevent a need to install @types/google-libphonenumber by the package user...
