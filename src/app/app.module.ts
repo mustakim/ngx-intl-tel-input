@@ -1,5 +1,5 @@
 import {
-	NgxIntlTelInputModule
+	NgxCustomnIntlTelModule
 } from 'projects/ngx-custom-intl-tel/src/lib/ngx-custom-intl-tel.module';
 
 import { NgModule } from '@angular/core';
@@ -15,8 +15,9 @@ import { AppComponent } from './app.component';
 		BrowserModule,
 		FormsModule,
 		ReactiveFormsModule,
-		NgxIntlTelInputModule,
+		NgxCustomnIntlTelModule,
 		BrowserAnimationsModule,
+
 	],
 	providers: [],
 	bootstrap: [AppComponent],

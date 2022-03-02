@@ -25,14 +25,14 @@ export class AppComponent {
 
 	changedValue: ChangeData;
 
-	phoneNumber = '+8801680459329'
+	phoneNumber = '+88016804593'
 
 	changePreferredCountries() {
 		this.preferredCountries = [CountryISO.India, CountryISO.Canada];
 	}
 
 	onValueChange(event) {
-		console.info(event);
+		console.info('GGGGGG', event);
 		this.changedValue = event;
 	}
 }

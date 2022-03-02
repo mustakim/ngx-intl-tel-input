@@ -58,10 +58,10 @@ to **angular.json** styles array:
 
 ### Import
 
-Add `NgxIntlTelInputModule` to your module file:
+Add `NgxCustomnIntlTelModule` to your module file:
 
 ```javascript
-imports: [NgxIntlTelInputModule];
+imports: [NgxCustomnIntlTelModule];
 ```
 
 ## Example

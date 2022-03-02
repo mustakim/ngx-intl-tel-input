@@ -1,5 +1,4 @@
 import * as lpn from 'google-libphonenumber';
-
 import {
 	Component,
 	ElementRef,
@@ -34,7 +33,7 @@ import { PhoneNumberFormat } from './enums/phone-number-format.enum';
 		{
 			provide: NG_VALUE_ACCESSOR,
 			// tslint:disable-next-line:no-forward-ref
-			useExisting: forwardRef(() => NgxIntlTelInputComponent),
+			useExisting: forwardRef(() => NgxCustomnIntlTelComponent),
 			multi: true,
 		},
 		{
@@ -44,7 +43,7 @@ import { PhoneNumberFormat } from './enums/phone-number-format.enum';
 		},
 	],
 })
-export class NgxIntlTelInputComponent implements OnInit, OnChanges {
+export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 	@Input() value = '';
 	@Input() preferredCountries: Array<string> = [];
 	@Input() enablePlaceholder = true;
@@ -251,6 +250,21 @@ export class NgxIntlTelInputComponent implements OnInit, OnChanges {
 			this.propagateChange(null);
 			this.valueChange.emit(null);
 		} else {
+			// getting phone number instance
+			let isValid = false;
+			let number: lpn.PhoneNumber;
+			try {
+				number = lpn.PhoneNumberUtil.getInstance().parse(
+					this.value,
+					countryCode
+				);
+				isValid = lpn.PhoneNumberUtil.getInstance().isValidNumberForRegion(
+					number,
+					countryCode
+				)
+			} catch (e) {
+			}
+
 			const intlNo = number
 				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.INTERNATIONAL)
 				: '';
@@ -261,6 +275,7 @@ export class NgxIntlTelInputComponent implements OnInit, OnChanges {
 			}
 
 			const changedValue = {
+				isValid: isValid,
 				number: this.value,
 				internationalNumber: intlNo,
 				nationalNumber: number
@@ -287,10 +302,14 @@ export class NgxIntlTelInputComponent implements OnInit, OnChanges {
 
 		if (this.phoneNumber && this.phoneNumber.length > 0) {
 			this.value = this.phoneNumber;
+			// getting phone number instance
+			const phoneNumberUtl = lpn.PhoneNumberUtil.getInstance();
+
 			const number = this.getParsedNumber(
 				this.phoneNumber,
 				this.selectedCountry.iso2
 			);
+
 			const intlNo = number
 				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.INTERNATIONAL)
 				: '';
@@ -299,7 +318,11 @@ export class NgxIntlTelInputComponent implements OnInit, OnChanges {
 				this.value = this.removeDialCode(intlNo);
 			}
 
+			// checking if phone number is valid or not
+			const isValid = phoneNumberUtl.isValidNumber(this.value);
+
 			this.propagateChange({
+				isValid: isValid,
 				number: this.value,
 				internationalNumber: intlNo,
 				nationalNumber: number

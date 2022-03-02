@@ -55,14 +55,15 @@
 
 
 
-<ngx-custom-intl-tel [cssClass]="'custom'"
+<ngx-custom-intl-tel #ff
+	[cssClass]="'custom'"
 	[preferredCountries]="preferredCountries"
 	[enableAutoCountrySelect]="true"
 	[enablePlaceholder]="true"
 	[searchCountryFlag]="true"
 	[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
 	[selectFirstCountry]="false"
-	[selectedCountryISO]="CountryISO.India"
+	[selectedCountryISO]="CountryISO.Bangladesh"
 	[maxLength]="15"
 	[phoneValidation]="true"
 	[separateDialCode]="separateDialCode"
@@ -71,3 +72,5 @@
 	(valueChange)="onValueChange($event)"
 	name="phone">
 </ngx-custom-intl-tel>
+
+<!-- <pre *ngIf="ff">{{ff | log }}</pre> -->
