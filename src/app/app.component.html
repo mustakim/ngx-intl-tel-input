@@ -13,14 +13,15 @@
 	<form #f="ngForm"
 		[formGroup]="phoneForm">
 		<div class="wrapper">
-			<ngx-custom-intl-tel [cssClass]="'custom'"
+			<ngx-custom-intl-tel #phoneControl
+				[cssClass]="'custom'"
 				[preferredCountries]="preferredCountries"
 				[enableAutoCountrySelect]="true"
 				[enablePlaceholder]="true"
 				[searchCountryFlag]="true"
 				[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
 				[selectFirstCountry]="false"
-				[selectedCountryISO]="CountryISO.India"
+				[selectedCountryISO]="CountryISO.Bangladesh"
 				[maxLength]="15"
 				[phoneValidation]="true"
 				[separateDialCode]="separateDialCode"
@@ -50,27 +51,27 @@
 	<div><strong>Form validation errors:</strong>
 		<pre>{{ f.form.controls['phone'].errors | json }}</pre>
 	</div>
+
+	<h2>Another Example without form</h2>
+	<ngx-custom-intl-tel #ff
+		[cssClass]="'custom'"
+		[preferredCountries]="preferredCountries"
+		[enableAutoCountrySelect]="true"
+		[enablePlaceholder]="true"
+		[searchCountryFlag]="true"
+		[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
+		[selectFirstCountry]="false"
+		[selectedCountryISO]="CountryISO.Bangladesh"
+		[maxLength]="15"
+		[phoneValidation]="true"
+		[separateDialCode]="separateDialCode"
+		[numberFormat]="PhoneNumberFormat.National"
+		[phoneNumber]="phoneNumber"
+		(valueChange)="onValueChange($event)"
+		name="phone">
+	</ngx-custom-intl-tel>
+
+
+	<pre>{{changedValue | json}}</pre>
+
 </div>
-
-
-
-
-<ngx-custom-intl-tel #ff
-	[cssClass]="'custom'"
-	[preferredCountries]="preferredCountries"
-	[enableAutoCountrySelect]="true"
-	[enablePlaceholder]="true"
-	[searchCountryFlag]="true"
-	[searchCountryField]="[SearchCountryField.Iso2, SearchCountryField.Name]"
-	[selectFirstCountry]="false"
-	[selectedCountryISO]="CountryISO.Bangladesh"
-	[maxLength]="15"
-	[phoneValidation]="true"
-	[separateDialCode]="separateDialCode"
-	[numberFormat]="PhoneNumberFormat.National"
-	[phoneNumber]="phoneNumber"
-	(valueChange)="onValueChange($event)"
-	name="phone">
-</ngx-custom-intl-tel>
-
-<!-- <pre *ngIf="ff">{{ff | log }}</pre> -->

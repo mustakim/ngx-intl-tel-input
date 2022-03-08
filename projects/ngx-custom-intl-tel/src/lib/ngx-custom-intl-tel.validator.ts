@@ -54,6 +54,7 @@ export const phoneNumberValidator = (control: any) => {
 					) {
 						return error;
 					} else {
+						// if (!control.value.number.trim().includes(control.value.dialCode)) return error;
 						inputBox.setCustomValidity('');
 					}
 				}

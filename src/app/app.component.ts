@@ -1,9 +1,8 @@
 import { CountryISO } from 'projects/ngx-custom-intl-tel/src/lib/enums/country-iso.enum';
 import { SearchCountryField } from 'projects/ngx-custom-intl-tel/src/lib/enums/search-country-field.enum';
-
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ChangeData, PhoneNumberFormat } from 'projects/ngx-custom-intl-tel/src/public_api';
+import { ChangeData, NgxCustomnIntlTelComponent, PhoneNumberFormat } from 'projects/ngx-custom-intl-tel/src/public_api';
 
 @Component({
 	selector: 'app-root',
@@ -11,7 +10,8 @@ import { ChangeData, PhoneNumberFormat } from 'projects/ngx-custom-intl-tel/src/
 	styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-	separateDialCode = false;
+	@ViewChild('phoneControl', { static: false }) phoneControl: NgxCustomnIntlTelComponent;
+	separateDialCode = true;
 	SearchCountryField = SearchCountryField;
 	CountryISO = CountryISO;
 	PhoneNumberFormat = PhoneNumberFormat;
@@ -32,7 +32,8 @@ export class AppComponent {
 	}
 
 	onValueChange(event) {
-		console.info('GGGGGG', event);
 		this.changedValue = event;
+		const dd = this.phoneControl.getPhoneNumberObject('+8801680459329', 'bn');
+		console.log('dd', dd)
 	}
 }

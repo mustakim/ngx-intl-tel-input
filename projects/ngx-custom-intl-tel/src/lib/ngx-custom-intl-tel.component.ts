@@ -22,6 +22,7 @@ import type { ChangeData } from './interfaces/change-data';
 import type { Country } from './model/country.model';
 import { phoneNumberValidator } from './ngx-custom-intl-tel.validator';
 import { PhoneNumberFormat } from './enums/phone-number-format.enum';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
 	// tslint:disable-next-line: component-selector
@@ -44,6 +45,17 @@ import { PhoneNumberFormat } from './enums/phone-number-format.enum';
 	],
 })
 export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
+
+	selectedCountry: Country = {
+		areaCodes: undefined,
+		dialCode: '',
+		htmlId: '',
+		flagClass: '',
+		iso2: '',
+		name: '',
+		placeHolder: '',
+		priority: 0,
+	};
 	@Input() value = '';
 	@Input() preferredCountries: Array<string> = [];
 	@Input() enablePlaceholder = true;
@@ -67,17 +79,6 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 	@Output() readonly countryChange = new EventEmitter<Country>();
 	@Output() readonly valueChange = new EventEmitter<ChangeData>();
 
-	selectedCountry: Country = {
-		areaCodes: undefined,
-		dialCode: '',
-		htmlId: '',
-		flagClass: '',
-		iso2: '',
-		name: '',
-		placeHolder: '',
-		priority: 0,
-	};
-
 
 	allCountries: Array<Country> = [];
 	preferredCountriesInDropDown: Array<Country> = [];
@@ -91,6 +92,11 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 
 	onTouched = () => { };
 	propagateChange = (_: ChangeData) => { };
+	isValid$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false)
+	set isValid(isValid) {
+		this.isValid$.next(isValid);
+	}
+
 
 	constructor(private countryCodeData: CountryCode) {
 		// If this is not set, ngx-bootstrap will try to use the bs3 CSS (which is not what we've embedded) and will
@@ -251,17 +257,17 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 			this.valueChange.emit(null);
 		} else {
 			// getting phone number instance
-			let isValid = false;
 			let number: lpn.PhoneNumber;
 			try {
 				number = lpn.PhoneNumberUtil.getInstance().parse(
 					this.value,
 					countryCode
 				);
-				isValid = lpn.PhoneNumberUtil.getInstance().isValidNumberForRegion(
+				this.isValid = lpn.PhoneNumberUtil.getInstance().isValidNumberForRegion(
 					number,
 					countryCode
 				)
+				// if (!this.value.trim().includes(this.selectedCountry.dialCode)) isValid = false;
 			} catch (e) {
 			}
 
@@ -275,7 +281,7 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 			}
 
 			const changedValue = {
-				isValid: isValid,
+				isValid: this.isValid$.getValue(),
 				number: this.value,
 				internationalNumber: intlNo,
 				nationalNumber: number
@@ -305,24 +311,42 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 			// getting phone number instance
 			const phoneNumberUtl = lpn.PhoneNumberUtil.getInstance();
 
-			const number = this.getParsedNumber(
-				this.phoneNumber,
-				this.selectedCountry.iso2
-			);
+			// const number = this.getParsedNumber(
+			// 	this.phoneNumber,
+			// 	this.selectedCountry.iso2
+			// );
+
+			let number: lpn.PhoneNumber;
+			try {
+				number = lpn.PhoneNumberUtil.getInstance().parse(
+					this.phoneNumber,
+					this.selectedCountry.iso2
+				);
+				this.isValid = lpn.PhoneNumberUtil.getInstance().isValidNumberForRegion(
+					number,
+					this.selectedCountry.iso2
+				)
+				// if (!this.value.trim().includes(this.selectedCountry.dialCode)) isValid = false;
+			} catch (e) {
+			}
 
 			const intlNo = number
 				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.INTERNATIONAL)
 				: '';
+
+
 			// parse phoneNumber if separate dial code is needed
 			if (this.separateDialCode && intlNo) {
 				this.value = this.removeDialCode(intlNo);
 			}
 
+			this.onPhoneNumberChange();
+
 			// checking if phone number is valid or not
-			const isValid = phoneNumberUtl.isValidNumber(this.value);
+			// const isValid = phoneNumberUtl.isValidNumber(this.value);
 
 			this.propagateChange({
-				isValid: isValid,
+				isValid: this.isValid$.getValue(),
 				number: this.value,
 				internationalNumber: intlNo,
 				nationalNumber: number
@@ -564,5 +588,59 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 				}
 			}
 		}
+	}
+
+	public getPhoneNumberObject(phoneNumber: string, countryCode?: string) {
+		const phoneUtil: any = lpn.PhoneNumberUtil.getInstance();
+		let number = phoneUtil.parse(phoneNumber, 'bd'.toUpperCase());
+		phoneNumber = phoneUtil.format(number, lpn.PhoneNumberFormat[this.numberFormat]);
+		if (phoneNumber.startsWith('+') && this.separateDialCode) {
+			phoneNumber = phoneNumber.substr(phoneNumber.indexOf(' ') + 1);
+		}
+
+		countryCode =
+			number && number.getCountryCode() ? this.getCountryIsoCode(number.getCountryCode(), number) : 'bd';
+
+		let isValid: boolean;
+		try {
+			number = lpn.PhoneNumberUtil.getInstance().parse(
+				phoneNumber,
+				countryCode
+			);
+			isValid = lpn.PhoneNumberUtil.getInstance().isValidNumberForRegion(
+				number,
+				countryCode
+			)
+		} catch (e) {
+		}
+
+		const intlNo = number
+			? this.phoneUtil.format(number, lpn.PhoneNumberFormat.INTERNATIONAL)
+			: '';
+
+		phoneNumber = phoneUtil.format(
+			number,
+			lpn.PhoneNumberFormat[this.numberFormat]
+		);
+		if (phoneNumber.startsWith('+') && this.separateDialCode) {
+			phoneNumber = phoneNumber.substr(phoneNumber.indexOf(' ') + 1);
+		}
+
+
+		const res = {
+			isValid: isValid,
+			number: phoneNumber,
+			internationalNumber: intlNo,
+			nationalNumber: number
+				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.NATIONAL)
+				: '',
+			e164Number: number
+				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.E164)
+				: '',
+			countryCode: countryCode.toUpperCase(),
+			dialCode: '+' + this.selectedCountry.dialCode,
+		}
+
+		return res;
 	}
 }
