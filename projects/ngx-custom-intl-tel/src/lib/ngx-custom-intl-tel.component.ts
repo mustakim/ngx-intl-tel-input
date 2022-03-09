@@ -302,6 +302,10 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 	}
 
 	public onCountrySelect(country: Country, el): void {
+		// reseting phone number when changing country from left dropdown
+		this.phoneNumber = '';
+
+
 		this.setSelectedCountry(country);
 
 		this.checkSeparateDialCodeStyle();
@@ -588,59 +592,5 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 				}
 			}
 		}
-	}
-
-	public getPhoneNumberObject(phoneNumber: string, countryCode?: string) {
-		const phoneUtil: any = lpn.PhoneNumberUtil.getInstance();
-		let number = phoneUtil.parse(phoneNumber, 'bd'.toUpperCase());
-		phoneNumber = phoneUtil.format(number, lpn.PhoneNumberFormat[this.numberFormat]);
-		if (phoneNumber.startsWith('+') && this.separateDialCode) {
-			phoneNumber = phoneNumber.substr(phoneNumber.indexOf(' ') + 1);
-		}
-
-		countryCode =
-			number && number.getCountryCode() ? this.getCountryIsoCode(number.getCountryCode(), number) : 'bd';
-
-		let isValid: boolean;
-		try {
-			number = lpn.PhoneNumberUtil.getInstance().parse(
-				phoneNumber,
-				countryCode
-			);
-			isValid = lpn.PhoneNumberUtil.getInstance().isValidNumberForRegion(
-				number,
-				countryCode
-			)
-		} catch (e) {
-		}
-
-		const intlNo = number
-			? this.phoneUtil.format(number, lpn.PhoneNumberFormat.INTERNATIONAL)
-			: '';
-
-		phoneNumber = phoneUtil.format(
-			number,
-			lpn.PhoneNumberFormat[this.numberFormat]
-		);
-		if (phoneNumber.startsWith('+') && this.separateDialCode) {
-			phoneNumber = phoneNumber.substr(phoneNumber.indexOf(' ') + 1);
-		}
-
-
-		const res = {
-			isValid: isValid,
-			number: phoneNumber,
-			internationalNumber: intlNo,
-			nationalNumber: number
-				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.NATIONAL)
-				: '',
-			e164Number: number
-				? this.phoneUtil.format(number, lpn.PhoneNumberFormat.E164)
-				: '',
-			countryCode: countryCode.toUpperCase(),
-			dialCode: '+' + this.selectedCountry.dialCode,
-		}
-
-		return res;
 	}
 }
