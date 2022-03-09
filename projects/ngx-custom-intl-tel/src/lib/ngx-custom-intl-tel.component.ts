@@ -303,8 +303,8 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 
 	public onCountrySelect(country: Country, el): void {
 		// reseting phone number when changing country from left dropdown
-		this.phoneNumber = '';
-
+		if (this.selectedCountry !== country)
+			this.phoneNumber = '';
 
 		this.setSelectedCountry(country);
 
