@@ -74,6 +74,7 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 	@Input() inputId = 'phone';
 	@Input() separateDialCode = false;
 	@Input() phoneNumber = '';
+	@Input() disabled: boolean;
 	separateDialCodeClass: string;
 
 	@Output() readonly countryChange = new EventEmitter<Country>();
@@ -84,7 +85,6 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 	preferredCountriesInDropDown: Array<Country> = [];
 	// Has to be 'any' to prevent a need to install @types/google-libphonenumber by the package user...
 	phoneUtil: any = lpn.PhoneNumberUtil.getInstance();
-	disabled = false;
 	errors: Array<any> = ['Phone number is required.'];
 	countrySearchText = '';
 
@@ -401,10 +401,6 @@ export class NgxCustomnIntlTelComponent implements OnInit, OnChanges {
 
 	registerOnTouched(fn: any) {
 		this.onTouched = fn;
-	}
-
-	setDisabledState(isDisabled: boolean): void {
-		this.disabled = isDisabled;
 	}
 
 	writeValue(obj: any): void {
